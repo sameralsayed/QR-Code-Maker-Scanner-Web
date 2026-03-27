@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Free online QR Code Maker &amp; Scanner – instant camera &amp; gallery scanning, custom QR generator for URLs, WiFi, vCard, contacts. History, flashlight, color customization, PNG export. 100% private browser app.">
+    <meta name="keywords" content="qr code scanner, barcode scanner, qr code generator, free qr scanner online, wifi qr, vcard qr, qr maker web app, samer saeid">
+    <meta name="author" content="SAMER SAEID">
+    <meta property="og:title" content="QR Code Maker &amp; Scanner – Free Online Web App">
+    <meta property="og:description" content="Instant scan &amp; generate QR codes &amp; barcodes. Camera, gallery, history, colors, download. Works on phone &amp; desktop.">
+    <meta property="og:image" content="https://picsum.photos/id/1015/1200/630">
+    <title>QR Code Maker &amp; Scanner – Free Online</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="https://picsum.photos/id/1015/32/32" type="image/x-icon">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+</head>
+<body class="dark-theme">
+    <!-- Top Navigation -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+                <i class="fa-solid fa-qrcode fa-2x text-success"></i>
+                <span class="fw-bold fs-3">QR Scanner</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navMenu">
+                <ul class="navbar-nav ms-auto gap-3">
+                    <li class="nav-item"><a class="nav-link active" href="#scanner">📷 Scanner</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#generator">✨ Generator</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#history">📜 History</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <header class="hero py-5 text-center">
+        <div class="container">
+            <h1 class="display-4 fw-bold">QR Code Maker &amp; Scanner</h1>
+            <p class="lead text-muted">The ultimate free web version of the popular app.<br>Scan instantly • Generate beautiful codes • Works offline</p>
+            <button class="btn btn-success btn-lg px-5 mt-3" onclick="document.querySelector('[data-tab=scanner]').click()">Start Scanning Now</button>
+        </div>
+    </header>
+
+    <div class="container py-5">
+        <ul class="nav nav-pills justify-content-center mb-5" id="mainTabs">
+            <li class="nav-item"><a class="nav-link active" data-tab="scanner" href="#">📷 Scanner</a></li>
+            <li class="nav-item"><a class="nav-link" data-tab="generator" href="#">✨ Generator</a></li>
+            <li class="nav-item"><a class="nav-link" data-tab="history" href="#">📜 History</a></li>
+        </ul>
+
+        <!-- Scanner Tab -->
+        <div id="scanner-tab" class="tab-content">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="scanner-card card shadow">
+                        <div class="card-body p-4 text-center">
+                            <div id="camera-container" class="position-relative rounded overflow-hidden bg-dark">
+                                <video id="video" autoplay playsinline class="w-100"></video>
+                                <canvas id="canvas" class="d-none"></canvas>
+                                <div id="scan-overlay" class="scan-frame"></div>
+                            </div>
+                            <div class="mt-4 d-flex gap-3 justify-content-center flex-wrap">
+                                <button id="start-camera" class="btn btn-success btn-lg"><i class="fa-solid fa-camera"></i> Start Camera</button>
+                                <button id="stop-camera" class="btn btn-outline-light btn-lg d-none"><i class="fa-solid fa-stop"></i> Stop</button>
+                                <label class="btn btn-outline-light btn-lg"><i class="fa-solid fa-image"></i> Gallery Scan <input type="file" id="gallery-upload" accept="image/*" class="d-none"></label>
+                                <button id="toggle-flash" class="btn btn-outline-light btn-lg"><i class="fa-solid fa-bolt"></i> Flashlight</button>
+                            </div>
+                            <div id="result" class="mt-4 alert alert-success d-none"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Generator Tab -->
+        <div id="generator-tab" class="tab-content d-none">
+            <div class="row justify-content-center">
+                <div class="col-lg-6">
+                    <div class="card shadow">
+                        <div class="card-body">
+                            <select id="content-type" class="form-select mb-3">
+                                <option value="url" selected>URL / Website</option>
+                                <option value="text">Plain Text</option>
+                                <option value="wifi">WiFi Network</option>
+                                <option value="contact">Contact (vCard)</option>
+                            </select>
+                            <div id="input-fields"></div>
+                            <div class="row g-3 mt-3">
+                                <div class="col-6"><label>QR Color</label><input type="color" id="qr-color" value="#000000" class="form-control form-control-color w-100"></div>
+                                <div class="col-6"><label>Background</label><input type="color" id="bg-color" value="#ffffff" class="form-control form-control-color w-100"></div>
+                            </div>
+                            <button id="generate-btn" class="btn btn-success w-100 mt-4 py-3">✨ Generate QR Code</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card shadow h-100">
+                        <div class="card-body text-center">
+                            <div id="qr-preview" class="mx-auto"></div>
+                            <button id="download-png" class="btn btn-outline-success mt-3"><i class="fa-solid fa-download"></i> Download PNG</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Tab -->
+        <div id="history-tab" class="tab-content d-none">
+            <div class="card shadow">
+                <div class="card-header"><h5>📜 Scanning History <span id="history-count" class="badge bg-success">0</span></h5></div>
+                <div class="card-body" id="history-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center py-5 border-top bg-dark text-light">
+        <p class="mb-0 small">
+            Copyright SAMER SAEID 
+            <span class="mx-2">•</span>
+            Made by ♥️ 
+            <a href="https://bio.link/samer" target="_blank" class="text-success fw-bold">SAMER SAEID</a>
+        </p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
